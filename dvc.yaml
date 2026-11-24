@@ -1,0 +1,30 @@
+stages:
+
+  preprocess:
+    cmd: python -m src.data.preprocessing
+    deps:
+      - src/data/preprocessing.py
+      - data/raw/reddit_preprocessing.csv
+    outs:
+      - data/processed/reddit_cleaned.csv
+
+
+  train:
+    cmd: python -m src.models.train
+    deps:
+      - src/models/train.py
+      - src/features/build_features.py
+      - data/processed/reddit_cleaned.csv
+    outs:
+      - artifacts/best_model.joblib
+      - data/processed/test_data.csv
+
+
+  evaluate:
+    cmd: python -m src.models.evaluate
+    deps:
+      - src/models/evaluate.py
+      - artifacts/best_model.joblib
+      - data/processed/test_data.csv
+    metrics:
+      - artifacts/metrics.json

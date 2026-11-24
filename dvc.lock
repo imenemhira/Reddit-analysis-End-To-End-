@@ -1,0 +1,62 @@
+schema: '2.0'
+stages:
+  preprocess:
+    cmd: python -m src.data.preprocessing
+    deps:
+    - path: data/raw/reddit_preprocessing.csv
+      hash: md5
+      md5: 29af2777aecdaea333d19bd2d5204795
+      size: 5098032
+    - path: src/data/preprocessing.py
+      hash: md5
+      md5: bd6d91bca0635c6ec5b81a26b6ff32a2
+      size: 1067
+    outs:
+    - path: data/processed/reddit_cleaned.csv
+      hash: md5
+      md5: 2c0eb7486b896ccefffff5c738e9eafc
+      size: 5127530
+  train:
+    cmd: python -m src.models.train
+    deps:
+    - path: data/processed/reddit_cleaned.csv
+      hash: md5
+      md5: 2c0eb7486b896ccefffff5c738e9eafc
+      size: 5127530
+    - path: src/features/build_features.py
+      hash: md5
+      md5: b058760dec2c494cb425f9bbec517768
+      size: 371
+    - path: src/models/train.py
+      hash: md5
+      md5: 2d6b6384d482022da7a2981448bae0f0
+      size: 9801
+    outs:
+    - path: artifacts/best_model.joblib
+      hash: md5
+      md5: e05824555a34810f6b4d6687a2ce40c8
+      size: 306912
+    - path: data/processed/test_data.csv
+      hash: md5
+      md5: b8278cbec3db2d91b63236fd0500b876
+      size: 1018491
+  evaluate:
+    cmd: python -m src.models.evaluate
+    deps:
+    - path: artifacts/best_model.joblib
+      hash: md5
+      md5: e05824555a34810f6b4d6687a2ce40c8
+      size: 306912
+    - path: data/processed/test_data.csv
+      hash: md5
+      md5: b8278cbec3db2d91b63236fd0500b876
+      size: 1018491
+    - path: src/models/evaluate.py
+      hash: md5
+      md5: 0e0b16c57cb2ba0658aecc69fb997381
+      size: 4716
+    outs:
+    - path: artifacts/metrics.json
+      hash: md5
+      md5: 9b9cafda5f45db69a6857bb64a0d3895
+      size: 1494
